@@ -1,8 +1,8 @@
-application: YOUR-PROJECT-ID-GOES-HERE
+application:groovy-groove-135211 
 version: 1
-runtime: go
-api_version: go1
+runtime: python
+api_version: 1
 
 handlers:
 - url: /.*
-  script: _go_app
+  script: helloworld.py
