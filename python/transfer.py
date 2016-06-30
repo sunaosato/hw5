@@ -3,6 +3,7 @@
 
 import urllib
 import json
+import logging
 import wsgiref.handlers
 
 import webapp2
@@ -21,62 +22,57 @@ for value in lines:
 
 def search(name):
   neighbars = []
+  
   for stations in stalst:
     for station in stations:
       if name == station:
         length = len(stations)
         index = stations.index(station)
         if length == index +1:
+#          logging.info("lastrun")
           neighbars.append(stations[index-1])
         elif index == 0:
+#          logging.info("first run")
           neighbars.append(stations[index+1])
         else:
+ #         logging.info("middle run")
           neighbars.append(stations[index+1])
           neighbars.append(stations[index-1])
+        break    
+  for a in neighbars:
+    logging.info("neighbars:%s"%a)
   return neighbars
         
 
 def guide(departure,arrival,stalst):
   prev = dict()
-  visited = set()
+  visited = []
   qlst = []
   qlst.append(departure)
   prev[departure]= 'first'
   while  len(qlst) > 0:
+    for a in qlst:
+      logging.info("qlst:%s"%a)
     next_station = qlst.pop(0)
-    
+    visited.append(next_station)
     if next_station == arrival:
       return prev
       break
 
     neighbars = search(next_station)
+    #for a in neighbars:
     if neighbars == None:
       len_neighbars = 0
     else:
       len_neighbars = len(neighbars)
-
+      logging.info("%s"%len_neighbars)
     i = 0
     while i < len_neighbars:
       neighbar = neighbars[i]
       if ((neighbar in visited)==False)and((neighbar in qlst)== False):
         prev[neighbar] = next_station
         qlst.append(neighbar)
-        i += 1
-
-
-#def keiro(visited,prev):
- # if visited != None:
-  #  keiro = []
-   # last = visited.pop(-1)
-    #keiro.append(last)
-   # while len(visited)>0:
-    #  presta = visited.pop(-1)
-     # if  prev[presta]: 
-      #keiro.append(prev[presta])
-    #return keiro
-
-
-
+      i += 1
 
     
 class transfer_guide(webapp2.RequestHandler):
@@ -85,8 +81,7 @@ class transfer_guide(webapp2.RequestHandler):
     arrival = self.request.get('station2')
     self.response.out.write('<font size = "5" color = "pink">Station1:%s<br>'%departure)
     self.response.out.write('Station2:%s<br></font>'%arrival)
-   
-
+  
     prev = guide(departure,arrival,stalst)
 
     result = []
