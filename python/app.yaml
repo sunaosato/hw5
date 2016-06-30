@@ -1,7 +1,13 @@
+application: groovy-groove-135211
+version: 1
 runtime: python27
 api_version: 1
 threadsafe: true
 
 handlers:
+- url: /foo
+  script: transfer.app
+- url: /transit
+  script: transfer.app
 - url: /.*
-  script: main.app
+  script: shuffle.app
